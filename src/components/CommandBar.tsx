@@ -1,15 +1,18 @@
 import type { Avatar } from "../data/avatars";
 import { useCopy } from "../hooks/useCopy";
+import type { ResolvedTheme } from "../hooks/useTheme";
 import { buildSnippet } from "../lib/buildSnippet";
 import { cn } from "../lib/cn";
 import AvatarSvg from "./AvatarSvg";
+import CodeBlock from "./CodeBlock";
 
 type Props = {
 	avatar: Avatar | null;
+	resolved: ResolvedTheme;
 	onClose: () => void;
 };
 
-function CommandBar({ avatar, onClose }: Readonly<Props>) {
+function CommandBar({ avatar, resolved, onClose }: Readonly<Props>) {
 	const { copiedKey, copy } = useCopy();
 	const open = avatar !== null;
 
@@ -23,7 +26,7 @@ function CommandBar({ avatar, onClose }: Readonly<Props>) {
 				aria-label="Close"
 				onClick={onClose}
 				className={cn(
-					"fixed inset-0 z-40 bg-brand-dark/30 transition-opacity duration-200",
+					"fixed inset-0 z-40 bg-brand-dark/40 transition-opacity duration-200",
 					open
 						? "pointer-events-auto opacity-100"
 						: "pointer-events-none opacity-0",
@@ -39,20 +42,20 @@ function CommandBar({ avatar, onClose }: Readonly<Props>) {
 				)}
 			>
 				<div className="mx-auto max-w-4xl px-4">
-					<div className="rounded-t-3xl border border-brand-light-gray border-b-0 bg-white px-5 pt-3 pb-5 shadow-[0_-12px_40px_rgba(20,20,19,0.12)]">
-						<div className="mx-auto mb-3 h-1 w-10 rounded-full bg-brand-light-gray" />
+					<div className="rounded-t-3xl border border-border border-b-0 bg-surface px-5 pt-3 pb-5 shadow-[0_-12px_40px_rgba(20,20,19,0.18)]">
+						<div className="mx-auto mb-3 h-1 w-10 rounded-full bg-border" />
 						{avatar && (
 							<div className="flex items-start gap-4">
-								<div className="flex size-16 shrink-0 items-center justify-center rounded-full bg-brand-light-gray/40">
+								<div className="flex size-16 shrink-0 items-center justify-center rounded-full bg-border/40">
 									<AvatarSvg avatar={avatar} size={56} />
 								</div>
 								<div className="min-w-0 flex-1">
 									<div className="mb-2 flex items-center justify-between gap-3">
 										<div className="flex items-baseline gap-2">
-											<span className="font-heading text-brand-mid-gray text-xs uppercase tracking-wide">
+											<span className="font-heading text-muted text-xs uppercase tracking-wide">
 												Selected
 											</span>
-											<span className="font-heading font-semibold text-brand-dark text-lg tabular-nums">
+											<span className="font-heading font-semibold text-fg text-lg tabular-nums">
 												avatar = {avatar.id}
 											</span>
 										</div>
@@ -67,7 +70,7 @@ function CommandBar({ avatar, onClose }: Readonly<Props>) {
 											<button
 												type="button"
 												onClick={() => copy(discord, "discord")}
-												className="rounded-lg border border-brand-light-gray bg-white px-3 py-1.5 font-heading font-medium text-brand-dark text-xs transition-colors hover:border-brand-mid-gray focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-orange/60"
+												className="rounded-lg border border-border bg-surface px-3 py-1.5 font-heading font-medium text-fg text-xs transition-colors hover:border-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-orange/60"
 											>
 												{copiedKey === "discord"
 													? "Copied!"
@@ -77,15 +80,22 @@ function CommandBar({ avatar, onClose }: Readonly<Props>) {
 												type="button"
 												onClick={onClose}
 												aria-label="Close"
-												className="rounded-lg border border-brand-light-gray bg-white px-3 py-1.5 font-heading font-medium text-brand-dark text-xs transition-colors hover:border-brand-mid-gray focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-orange/60"
+												className="rounded-lg border border-border bg-surface px-3 py-1.5 font-heading font-medium text-fg text-xs transition-colors hover:border-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-orange/60"
 											>
 												Close
 											</button>
 										</div>
 									</div>
-									<pre className="max-h-[40vh] overflow-auto whitespace-pre rounded-lg bg-brand-dark p-4 font-mono text-[11px] text-brand-light leading-relaxed">
-										<code>{snippet}</code>
-									</pre>
+									<CodeBlock
+										code={snippet}
+										resolved={resolved}
+										className={cn(
+											"max-h-[40vh] overflow-auto whitespace-pre rounded-lg p-4 font-mono text-[11px] leading-relaxed",
+											resolved === "dark"
+												? "bg-brand-dark"
+												: "bg-brand-light-gray/40",
+										)}
+									/>
 								</div>
 							</div>
 						)}
