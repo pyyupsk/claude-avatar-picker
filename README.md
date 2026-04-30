@@ -1,73 +1,57 @@
-# React + TypeScript + Vite
+# Claude Avatar Picker
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Browse all 72 built-in claude.ai profile avatars and copy a one-line console command to apply any of them to your account.
 
-Currently, two official plugins are available:
+🔗 **[pyyupsk.github.io/claude-avatar-picker](https://pyyupsk.github.io/claude-avatar-picker/)**
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## What is this?
 
-## React Compiler
+claude.ai stores your profile picture as an integer id (the `avatar` field on `/api/account_profile`). The web app maps each id to a designed SVG client-side. The id space contains **72 unique designs** — but the picker UI only shows a handful at random when you click "Randomize avatar".
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+This site shows them all, lets you pick one, and gives you a console snippet that:
 
-## Expanding the ESLint configuration
+1. Walks the React fiber tree to find the React Query `QueryClient`.
+2. Issues `PUT /api/account_profile` with your chosen id.
+3. Calls `qc.invalidateQueries()` so the avatar updates instantly without a reload.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## How to use
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+1. Open the site, pick an avatar.
+2. Copy the snippet (raw or Discord-formatted).
+3. Open claude.ai, paste in DevTools console, hit enter.
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+That's it.
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Notes
+
+- `id = 0` clears the avatar (renders initials).
+- `id = 1..72` renders one of the 72 designs.
+- The server stores any integer; ids outside `1..72` render as a blank circle.
+- Last verified against claude.ai on 2026-04-30.
+
+## Stack
+
+- Vite + React 19 + TypeScript
+- Tailwind CSS v4 with semantic tokens
+- Biome (lint + format)
+- prism-react-renderer (syntax highlighting)
+- System-aware theme (light / dark / system) with no flash on reload
+- Bun as runtime and package manager
+
+## Develop
+
+```sh
+bun install
+bun dev          # vite dev server
+bun run check    # biome check
+bun run typecheck
+bun run build
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Deploy
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+GitHub Actions builds on every push to `main` and publishes to GitHub Pages.
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+## License
+
+MIT
