@@ -1,10 +1,12 @@
-import type { Avatar } from "../data/avatars";
+import { lazy, Suspense } from "react";
 import { useCopy } from "../hooks/useCopy";
 import type { ResolvedTheme } from "../hooks/useTheme";
 import { buildSnippet } from "../lib/buildSnippet";
 import { cn } from "../lib/cn";
+import type { Avatar } from "../types/avatar";
 import AvatarSvg from "./AvatarSvg";
-import CodeBlock from "./CodeBlock";
+
+const CodeBlock = lazy(() => import("./CodeBlock"));
 
 type Props = {
 	avatar: Avatar | null;
@@ -86,16 +88,31 @@ function CommandBar({ avatar, resolved, onClose }: Readonly<Props>) {
 											</button>
 										</div>
 									</div>
-									<CodeBlock
-										code={snippet}
-										resolved={resolved}
-										className={cn(
-											"max-h-[40vh] overflow-auto whitespace-pre rounded-lg p-4 font-mono text-[11px] leading-relaxed",
-											resolved === "dark"
-												? "bg-brand-dark"
-												: "bg-brand-light-gray/40",
-										)}
-									/>
+									<Suspense
+										fallback={
+											<pre
+												className={cn(
+													"max-h-[40vh] overflow-auto whitespace-pre rounded-lg p-4 font-mono text-[11px] leading-relaxed",
+													resolved === "dark"
+														? "bg-brand-dark text-brand-light"
+														: "bg-brand-light-gray/40 text-brand-dark",
+												)}
+											>
+												<code>{snippet}</code>
+											</pre>
+										}
+									>
+										<CodeBlock
+											code={snippet}
+											resolved={resolved}
+											className={cn(
+												"max-h-[40vh] overflow-auto whitespace-pre rounded-lg p-4 font-mono text-[11px] leading-relaxed",
+												resolved === "dark"
+													? "bg-brand-dark"
+													: "bg-brand-light-gray/40",
+											)}
+										/>
+									</Suspense>
 								</div>
 							</div>
 						)}

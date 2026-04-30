@@ -1,4 +1,4 @@
-import type { Avatar } from "../data/avatars";
+import type { Avatar } from "../types/avatar";
 
 type Props = {
 	avatar: Avatar;

@@ -1,5 +1,5 @@
-import type { Avatar } from "../data/avatars";
 import { cn } from "../lib/cn";
+import type { Avatar } from "../types/avatar";
 import AvatarSvg from "./AvatarSvg";
 
 type Props = {
